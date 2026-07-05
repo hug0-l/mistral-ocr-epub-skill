@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# API keys / secrets
+.env
+*.env
+
+# macOS
+.DS_Store
+
+# Book work directories (user data)
+work/
+pages/
+pages_with_img/
+out/
+
+# Translation temp files
+translations_*.json
+translated_chunk_*.json
+fresh_*.json
+fix_*.json
+cache*.json
+
+# OCR temp scripts
+/tmp/
