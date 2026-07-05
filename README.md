@@ -1,6 +1,8 @@
-# mistral-ocr-epub
+# mistral-ocr-epub-skill
 
-**OCR scanned books → structured EPUB** using the Mistral OCR API. Universal — no hardcoded book-specific rules.
+**opencode / Claude Code skill** — OCR scanned books → structured EPUB via the Mistral OCR API. Universal: no hardcoded book-specific rules.
+
+Install into `~/.config/opencode/skills/mistral-ocr-epub/` or `~/.claude/skills/mistral-ocr-epub/`. The skill activates on phrases like "ocr这本书", "扫书转epub", "mistral ocr", "pdf转epub".
 
 ## Features
 
@@ -12,21 +14,38 @@
 - **Auto-cleanup** — strips page numbers, PDF metadata watermarks
 - **Navigation sync** — translation-ready with post-export H1 alignment
 
+## Installation
+
+```bash
+# 1. Clone into opencode skills directory
+git clone https://github.com/hug0-l/mistral-ocr-epub-skill.git \
+  ~/.config/opencode/skills/mistral-ocr-epub
+
+# 2. Set API key
+export MISTRAL_API_KEY="sk-..."
+
+# 3. Install dependencies
+pip install mistralai httpx ebooklib Pillow PyPDF2
+```
+
 ## Quick Start
 
 ```bash
-export MISTRAL_API_KEY="sk-..."
-pip install mistralai httpx ebooklib Pillow PyPDF2
+export SKILL_DIR=~/.config/opencode/skills/mistral-ocr-epub
 
-# OCR → EPUB
-python3 -m ocr_book --input book.pdf --save-pages ./pages
-python3 -m build_epub --pages ./pages --output ./book.epub
+# OCR → EPUB (single command via skill agent, or step-by-step:)
+PYTHONPATH="$SKILL_DIR/scripts" python3 -m ocr_book \
+  --input book.pdf --save-pages ./pages
+PYTHONPATH="$SKILL_DIR/scripts" python3 -m build_epub \
+  --pages ./pages --output ./book.epub
 ```
 
 For image-heavy books:
 ```bash
-python3 -m ocr_book --input book.pdf --save-pages ./pages --extract-images
-python3 -m build_epub --pages ./pages --output ./book.epub
+PYTHONPATH="$SKILL_DIR/scripts" python3 -m ocr_book \
+  --input book.pdf --save-pages ./pages --extract-images
+PYTHONPATH="$SKILL_DIR/scripts" python3 -m build_epub \
+  --pages ./pages --output ./book.epub
 ```
 
 ## Chapter Detection Strategies
@@ -55,6 +74,10 @@ This pipeline is intentionally universal:
 - **Chapter detection** from real markdown content, not precomputed metadata
 - **Heading filtering** via `--skip-heading` — user controls what appears in navigation
 - **Page cleanup** (page numbers, PDF artifacts) via pattern matching, not book-specific rules
+
+## How the Skill Activates
+
+The file `SKILL.md` declares a trigger description. When the user says something like "ocr这本书", "扫书转epub", "mistral ocr", or "pdf转epub", opencode auto-loads this skill and the agent follows the workflow in `SKILL.md` — asking for the file path, output dir, genre, whether to extract images, etc.
 
 ## Translation Pipeline
 
